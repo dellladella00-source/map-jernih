@@ -1,52 +1,22 @@
--- V3 FINAL BY dellladella00-source - MAP JERNIH + HAPUS BEMPER & PENGAMAN
--- V4 FINAL CANTER BY dellladella00-source - HAPUS PENGAMAN & BEMPER CANTER
-local W = game:GetService("Workspace")
-local L = game:GetService("Lighting")
-
--- Map Jernih tetap
-L.FogEnd = 100000
-L.Brightness = 2
-
-local targetNames = {
-    "Pengaman", "pengaman", "Bumper", "bumper", "Bodykit", "Bullbar",
-    "Front", "AddOn", "Lip", "Spoiler", "CanterFE74HD"
-}
-
-local function isTarget(obj)
-    local n = obj.Name
-    for _, t in pairs(targetNames) do
-        if string.find(n, t) then
-            return true
+-- V5 BRUTAL DELETE CANTER - TEST LANGSUNG
+for _,v in pairs(game:GetService("Workspace"):GetDescendants()) do
+    if v:IsA("BasePart") or v:IsA("MeshPart") then
+        local n = string.lower(v.Name)
+        -- Target pengaman & bumper
+        if string.find(n, "pengaman") or string.find(n, "bumper") or string.find(n, "bullbar") or string.find(n, "bodykit") or n == "pengaman.001" or n == "pengaman.002" then
+            pcall(function()
+                v:Destroy()
+            end)
         end
-    end
-    -- Cek juga kalo dia anak dari Pengaman
-    if obj.Parent and string.find(obj.Parent.Name, "Pengaman") then
-        return true
-    end
-    return false
-end
-
-local function Hapus(obj)
-    if obj:IsA("BasePart") or obj:IsA("MeshPart") then
-        if isTarget(obj) then
-            -- Jangan hapus ban
-            if string.find(string.lower(obj.Name), "wheel") or string.find(string.lower(obj.Name), "ban") then return end
-            
-            obj.Transparency = 1
-            obj.CanCollide = false
-            if obj:FindFirstChildWhichIsA("Decal") then
-                obj:FindFirstChildWhichIsA("Decal").Transparency = 1
-            end
-            -- Hapus semua texture
-            for _,c in pairs(obj:GetChildren()) do
-                if c:IsA("Texture") or c:IsA("Decal") then
-                    c:Destroy()
-                end
-            end
+        -- Jika parent nya Pengaman
+        if v.Parent and string.find(string.lower(v.Parent.Name), "pengaman") then
+            pcall(function()
+                v:Destroy()
+            end)
         end
     end
 end
-
+print("DONE - PENGAMAN DESTROYED")
 -- Scan semua
 for _, v in pairs(W:GetDescendants()) do
     Hapus(v)
