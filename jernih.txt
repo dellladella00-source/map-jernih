@@ -1,47 +1,17 @@
--- V5 BRUTAL DELETE CANTER - TEST LANGSUNG
-for _,v in pairs(game:GetService("Workspace"):GetDescendants()) do
-    if v:IsA("BasePart") or v:IsA("MeshPart") then
-        local n = string.lower(v.Name)
-        -- Target pengaman & bumper
-        if string.find(n, "pengaman") or string.find(n, "bumper") or string.find(n, "bullbar") or string.find(n, "bodykit") or n == "pengaman.001" or n == "pengaman.002" then
-            pcall(function()
-                v:Destroy()
-            end)
-        end
-        -- Jika parent nya Pengaman
-        if v.Parent and string.find(string.lower(v.Parent.Name), "pengaman") then
-            pcall(function()
-                v:Destroy()
-            end)
-        end
+--- V5 SUPER BRUTAL - HAPUS MODEL PENGAMAN LANGSUNG
+local ws = workspace
+for _,m in pairs(ws:GetDescendants()) do
+    if m.Name == "Pengaman.001" then
+        m:Destroy()
     end
-end
-print("DONE - PENGAMAN DESTROYED")
--- Scan semua
-for _, v in pairs(W:GetDescendants()) do
-    Hapus(v)
-end
-
-W.DescendantAdded:Connect(function(n)
-    task.wait(0.2)
-    Hapus(n)
-end)
-
--- Cara brutal kedua: cari model Canter nya langsung
-for _, v in pairs(W:GetDescendants()) do
-    if v.Name == "Pengaman.001" or v.Name == "Pengaman" or v.Name == "Bumper" then
-        if v:IsA("Model") then
-            for _, p in pairs(v:GetDescendants()) do
-                if p:IsA("BasePart") then
-                    p.Transparency = 1
-                    p.CanCollide = false
-                end
+    if m.Name == "CanterFE74HD" then
+        -- Jangan hapus semua, cuma anaknya yang pengaman
+        for _,c in pairs(m:GetDescendants()) do
+            if string.lower(c.Name):find("pengaman") then
+                c:Destroy()
             end
-        else
-            v.Transparency = 1
-            v.CanCollide = false
         end
     end
-end
+endend
 
 print("✅ V4 Canter Loaded - Pengaman.001 Hilang!")
