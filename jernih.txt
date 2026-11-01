@@ -1,58 +1,77 @@
 -- V3 FINAL BY dellladella00-source - MAP JERNIH + HAPUS BEMPER & PENGAMAN
--- Ban tetap ada, cuma bemper & pengaman samping yang hilang
-local L = game:GetService("Lighting")
+-- V4 FINAL CANTER BY dellladella00-source - HAPUS PENGAMAN & BEMPER CANTER
 local W = game:GetService("Workspace")
+local L = game:GetService("Lighting")
 
--- 1. MAP JERNIH
+-- Map Jernih tetap
 L.FogEnd = 100000
-L.FogStart = 0
 L.Brightness = 2
-L.GlobalShadows = false
-L.ExposureCompensation = 0.1
-for _,v in pairs(L:GetChildren()) do
-    if v:IsA("BlurEffect") or v:IsA("SunRays") or v:IsA("ColorCorrectionEffect") or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
-        v.Enabled = false
-    end
-end
 
--- 2. HAPUS BEMPER & PENGAMAN (ANTI BAN)
-local function IsBumper(name)
-    name = string.lower(name)
-    -- Kalo ada kata ban/wheel/roda, JANGAN dihapus (return false)
-    if string.find(name, "ban") or string.find(name, "wheel") or string.find(name, "tire") or string.find(name, "velg") or string.find(name, "roda") then
-        return false
+local targetNames = {
+    "Pengaman", "pengaman", "Bumper", "bumper", "Bodykit", "Bullbar",
+    "Front", "AddOn", "Lip", "Spoiler", "CanterFE74HD"
+}
+
+local function isTarget(obj)
+    local n = obj.Name
+    for _, t in pairs(targetNames) do
+        if string.find(n, t) then
+            return true
+        end
     end
-    -- Yang dihapus cuma ini
-    if string.find(name, "bumper") or string.find(name, "bemper") or string.find(name, "bullbar") or string.find(name, "bull") or string.find(name, "guard") or string.find(name, "pengaman") or string.find(name, "front") or string.find(name, "side") and string.find(name, "skirt") or string.find(name, "bodykit") or string.find(name, "mudguard") or string.find(name, "spakbor") then
-        return true
-    end
-    -- Tambahan buat truk Canter biasanya namanya FrontLip, Lower, AddOn
-    if name == "bumper" or name == "frontbumper" or name == "f_bumper" or name == "guard" then
+    -- Cek juga kalo dia anak dari Pengaman
+    if obj.Parent and string.find(obj.Parent.Name, "Pengaman") then
         return true
     end
     return false
 end
 
 local function Hapus(obj)
-    if obj:IsA("BasePart") and IsBumper(obj.Name) then
-        obj.Transparency = 1
-        obj.CanCollide = false
-        -- Hapus juga decal nya biar bener2 hilang
-        for _,d in pairs(obj:GetChildren()) do
-            if d:IsA("Decal") or d:IsA("Texture") then
-                d.Transparency = 1
+    if obj:IsA("BasePart") or obj:IsA("MeshPart") then
+        if isTarget(obj) then
+            -- Jangan hapus ban
+            if string.find(string.lower(obj.Name), "wheel") or string.find(string.lower(obj.Name), "ban") then return end
+            
+            obj.Transparency = 1
+            obj.CanCollide = false
+            if obj:FindFirstChildWhichIsA("Decal") then
+                obj:FindFirstChildWhichIsA("Decal").Transparency = 1
+            end
+            -- Hapus semua texture
+            for _,c in pairs(obj:GetChildren()) do
+                if c:IsA("Texture") or c:IsA("Decal") then
+                    c:Destroy()
+                end
             end
         end
     end
 end
 
-for _,v in pairs(W:GetDescendants()) do
+-- Scan semua
+for _, v in pairs(W:GetDescendants()) do
     Hapus(v)
 end
 
 W.DescendantAdded:Connect(function(n)
-    task.wait(0.3)
+    task.wait(0.2)
     Hapus(n)
 end)
 
-print("✅ V3 Loaded - Bumper & Pengaman Hilang, Ban Aman!")
+-- Cara brutal kedua: cari model Canter nya langsung
+for _, v in pairs(W:GetDescendants()) do
+    if v.Name == "Pengaman.001" or v.Name == "Pengaman" or v.Name == "Bumper" then
+        if v:IsA("Model") then
+            for _, p in pairs(v:GetDescendants()) do
+                if p:IsA("BasePart") then
+                    p.Transparency = 1
+                    p.CanCollide = false
+                end
+            end
+        else
+            v.Transparency = 1
+            v.CanCollide = false
+        end
+    end
+end
+
+print("✅ V4 Canter Loaded - Pengaman.001 Hilang!")
